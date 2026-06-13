@@ -1,5 +1,6 @@
 import { useBstStore } from '../store/bstStore'
 import { useTracePlayback } from '../hooks/useTracePlayback'
+import { useKeyboardPlayback } from '../hooks/useKeyboardPlayback'
 import { TreeView } from './TreeView'
 import { Explainer } from './Explainer'
 import { EXPLANATIONS } from '../content/explanations'
@@ -29,6 +30,7 @@ function Btn({
 
 export function BstView() {
   useTracePlayback(useBstStore)
+  useKeyboardPlayback(useBstStore)
   const s = useBstStore()
   const frame = s.frames[s.cursor] ?? s.frames[0]
   const last = s.frames.length - 1

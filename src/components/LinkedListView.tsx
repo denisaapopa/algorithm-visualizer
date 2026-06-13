@@ -1,5 +1,6 @@
 import { useListStore } from '../store/listStore'
 import { useTracePlayback } from '../hooks/useTracePlayback'
+import { useKeyboardPlayback } from '../hooks/useKeyboardPlayback'
 import { Explainer } from './Explainer'
 import { EXPLANATIONS } from '../content/explanations'
 import type { ListFrame } from '../structures/linkedList'
@@ -61,6 +62,7 @@ function Chain({ frame }: { frame: ListFrame }) {
 
 export function LinkedListView() {
   useTracePlayback(useListStore)
+  useKeyboardPlayback(useListStore)
   const s = useListStore()
   const frame = s.frames[s.cursor] ?? s.frames[0]
   const last = s.frames.length - 1

@@ -4,10 +4,12 @@ import { Controls } from './Controls'
 import { InfoPanel } from './InfoPanel'
 import { PseudocodePanel } from './PseudocodePanel'
 import { usePlaybackLoop } from '../hooks/usePlaybackLoop'
+import { useKeyboardPlayback } from '../hooks/useKeyboardPlayback'
 import { usePlayerStore } from '../store/playerStore'
 
 export function SortingApp() {
   usePlaybackLoop()
+  useKeyboardPlayback(usePlayerStore)
   const compareMode = usePlayerStore((s) => s.compareMode)
 
   if (compareMode) {

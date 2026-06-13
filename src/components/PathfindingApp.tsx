@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useGridStore, type PaintMode } from '../store/gridStore'
 import { useTracePlayback } from '../hooks/useTracePlayback'
+import { useKeyboardPlayback } from '../hooks/useKeyboardPlayback'
 import { Explainer } from './Explainer'
 import { EXPLANATIONS } from '../content/explanations'
 import type { PathAlgo } from '../structures/pathfinding'
@@ -134,6 +135,7 @@ function GridCanvas() {
 
 export function PathfindingApp() {
   useTracePlayback(useGridStore)
+  useKeyboardPlayback(useGridStore)
   const s = useGridStore()
   const frame = s.frames[s.cursor] ?? s.frames[0]
   const last = s.frames.length - 1

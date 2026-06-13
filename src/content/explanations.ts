@@ -318,6 +318,53 @@ export const EXPLANATIONS: Record<string, Explanation> = {
     realWorld: ['Introsort’s fallback to guarantee worst case.', 'Priority-queue-driven scheduling.', 'Real-time / embedded systems.'],
   },
 
+  stack: {
+    title: 'Stack (LIFO)',
+    summary:
+      'Last in, first out. You can only touch the top — the most recently added item is the first one out.',
+    how: [
+      'Push adds an item to the top of the stack.',
+      'Pop removes and returns the item from the top.',
+      'Both are O(1) — you never reach into the middle.',
+      'Think of a stack of plates: you add and take from the top only.',
+    ],
+    useWhen: [
+      'Undo/redo histories.',
+      'Backtracking and depth-first traversal.',
+      'Evaluating expressions and matching brackets.',
+    ],
+    strengths: ['O(1) push and pop.', 'Dead simple.', 'Natural fit for nested / recursive processes.'],
+    weaknesses: ['Only the top is reachable.', 'No random access or search without emptying it.'],
+    realWorld: [
+      'The function call stack itself.',
+      'Browser back button and editor undo.',
+      'DFS, parsers, and expression evaluation.',
+    ],
+  },
+
+  queue: {
+    title: 'Queue (FIFO)',
+    summary:
+      'First in, first out. Add at the back, remove from the front — items are served in arrival order.',
+    how: [
+      'Enqueue adds an item to the back.',
+      'Dequeue removes the item at the front.',
+      'Order is preserved: the oldest item leaves first.',
+      'Think of a line at a checkout — first to arrive is first served.',
+    ],
+    useWhen: [
+      'Processing work in the order it arrived.',
+      'Breadth-first traversal.',
+      'Buffering between a producer and a consumer.',
+    ],
+    strengths: ['O(1) enqueue and dequeue (with the right backing store).', 'Preserves order — fair processing.'],
+    weaknesses: [
+      'Only the front and back are reachable.',
+      'A naive array that shifts on dequeue is O(n) — use a linked list or ring buffer.',
+    ],
+    realWorld: ['Job/task queues and OS scheduling.', 'BFS.', 'Print spoolers and message queues.'],
+  },
+
   linkedlist: {
     title: 'Linked List (singly)',
     summary:

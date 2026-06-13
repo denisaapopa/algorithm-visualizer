@@ -1,5 +1,6 @@
 import { useHashStore } from '../store/hashStore'
 import { useTracePlayback } from '../hooks/useTracePlayback'
+import { useKeyboardPlayback } from '../hooks/useKeyboardPlayback'
 import type { HashFrame } from '../structures/hashTable'
 import { Explainer } from './Explainer'
 import { EXPLANATIONS } from '../content/explanations'
@@ -70,6 +71,7 @@ function Buckets({ frame }: { frame: HashFrame }) {
 
 export function HashTableView() {
   useTracePlayback(useHashStore)
+  useKeyboardPlayback(useHashStore)
   const s = useHashStore()
   const frame = s.frames[s.cursor] ?? s.frames[0]
   const last = s.frames.length - 1
