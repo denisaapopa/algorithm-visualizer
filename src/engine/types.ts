@@ -15,6 +15,7 @@ export interface SortEvent {
   type: EventType
   indices: number[]
   message?: string
+  line?: number // pseudocode line index this event executes
 }
 
 export interface Stats {
@@ -30,6 +31,7 @@ export interface Frame {
   sorted: number[]
   stats: Stats
   message: string
+  line: number // pseudocode line to highlight for this frame
 }
 
 export interface Complexity {
@@ -46,4 +48,5 @@ export interface AlgorithmMeta {
   generator: (a: number[]) => Generator<SortEvent>
   complexity: Complexity
   blurb: string
+  pseudocode: string[] // one entry per line; events reference these by index
 }

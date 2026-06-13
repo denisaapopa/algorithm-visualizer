@@ -29,6 +29,7 @@ export function buildFrames(
   const frames: Frame[] = []
   const sorted = new Set<number>()
   const stats = { comparisons: 0, swaps: 0, accesses: 0 }
+  let line = -1 // last known pseudocode line; carried forward when an event omits it
 
   const push = (active: number[], role: EventType, message: string) => {
     frames.push({
@@ -38,6 +39,7 @@ export function buildFrames(
       sorted: [...sorted],
       stats: { ...stats },
       message,
+      line,
     })
   }
 
@@ -57,11 +59,13 @@ export function buildFrames(
         stats.accesses += 1
         break
     }
+    if (ev.line !== undefined) line = ev.line
     if (ev.type === 'markSorted') ev.indices.forEach((i) => sorted.add(i))
     push(ev.type === 'markSorted' ? [] : ev.indices, ev.type, ev.message ?? describe(ev))
   }
 
   for (let i = 0; i < arr.length; i++) sorted.add(i)
+  line = -1
   push(
     [],
     'compare',

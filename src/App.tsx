@@ -1,6 +1,7 @@
 import { BarVisualizer } from './components/BarVisualizer'
 import { Controls } from './components/Controls'
 import { InfoPanel } from './components/InfoPanel'
+import { PseudocodePanel } from './components/PseudocodePanel'
 import { usePlaybackLoop } from './hooks/usePlaybackLoop'
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
             <BarVisualizer />
           </div>
           <Controls />
+          <PseudocodePanel />
         </section>
 
         <aside className="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
