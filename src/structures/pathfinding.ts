@@ -2,10 +2,13 @@
 // the rest of the app. BFS, DFS, Dijkstra and A* are unified as a best-first
 // search that differs only in which frontier cell it expands next.
 
+export const HEAVY = 8 // cost to enter a weighted cell (normal cells cost 1)
+
 export interface Grid {
   rows: number
   cols: number
   walls: Set<number>
+  weights: Set<number> // costly terrain — passable but expensive
   start: number
   end: number
 }
@@ -16,7 +19,7 @@ export interface GridFrame {
   current: number | null
   path: number[]
   message: string
-  stats: { visited: number; pathLength: number }
+  stats: { visited: number; pathLength: number; pathCost: number }
 }
 
 export type PathAlgo = 'bfs' | 'dfs' | 'dijkstra' | 'astar'
@@ -64,14 +67,17 @@ export function runPathfinding(g: Grid, algo: PathAlgo): GridFrame[] {
   const open: number[] = [g.start]
   const openSet = new Set<number>([g.start])
 
+  const cost = (i: number) => (g.weights.has(i) ? HEAVY : 1)
+
   const snap = (current: number | null, message: string, path: number[] = []) => {
+    const pathCost = path.reduce((acc, idx, k) => (k === 0 ? 0 : acc + cost(idx)), 0)
     frames.push({
       visited: [...visited],
       frontier: [...openSet],
       current,
       path,
       message,
-      stats: { visited: visited.size, pathLength: path.length ? path.length - 1 : 0 },
+      stats: { visited: visited.size, pathLength: path.length ? path.length - 1 : 0, pathCost },
     })
   }
 
@@ -109,7 +115,7 @@ export function runPathfinding(g: Grid, algo: PathAlgo): GridFrame[] {
 
     for (const nb of neighbors(g, cur)) {
       if (g.walls.has(nb) || visited.has(nb)) continue
-      const tentative = gScore.get(cur)! + 1
+      const tentative = gScore.get(cur)! + cost(nb)
       if (!gScore.has(nb) || tentative < gScore.get(nb)!) {
         gScore.set(nb, tentative)
         cameFrom.set(nb, cur)
@@ -123,9 +129,10 @@ export function runPathfinding(g: Grid, algo: PathAlgo): GridFrame[] {
 
   if (reached) {
     const path = reconstruct(cameFrom, g.start, g.end)
+    const total = path.reduce((acc, idx, k) => (k === 0 ? 0 : acc + (g.weights.has(idx) ? HEAVY : 1)), 0)
     snap(
       g.end,
-      `Goal reached — path is ${path.length} cells, ${visited.size} cells explored.`,
+      `Goal reached — ${path.length} cells, total cost ${total}, ${visited.size} cells explored.`,
       path,
     )
   } else {

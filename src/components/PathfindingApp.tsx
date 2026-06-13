@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useGridStore } from '../store/gridStore'
+import { useGridStore, type PaintMode } from '../store/gridStore'
 import { useTracePlayback } from '../hooks/useTracePlayback'
 import { Explainer } from './Explainer'
 import { EXPLANATIONS } from '../content/explanations'
@@ -10,6 +10,11 @@ const ALGOS: { id: PathAlgo; label: string }[] = [
   { id: 'dfs', label: 'DFS' },
   { id: 'dijkstra', label: 'Dijkstra' },
   { id: 'astar', label: 'A*' },
+]
+
+const PAINT: { id: PaintMode; label: string }[] = [
+  { id: 'wall', label: 'Wall' },
+  { id: 'weight', label: 'Weight' },
 ]
 
 function Btn({
@@ -35,11 +40,38 @@ function Btn({
   )
 }
 
+function Pills<T extends string>({
+  options,
+  value,
+  onChange,
+}: {
+  options: { id: T; label: string }[]
+  value: T
+  onChange: (v: T) => void
+}) {
+  return (
+    <div className="flex gap-1 rounded-lg border border-slate-800 bg-slate-900/60 p-1">
+      {options.map((o) => (
+        <button
+          key={o.id}
+          onClick={() => onChange(o.id)}
+          className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+            value === o.id ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 function GridCanvas() {
   const grid = useGridStore((s) => s.grid)
   const frames = useGridStore((s) => s.frames)
   const cursor = useGridStore((s) => s.cursor)
-  const toggleWall = useGridStore((s) => s.toggleWall)
+  const paintMode = useGridStore((s) => s.paintMode)
+  const paintCell = useGridStore((s) => s.paintCell)
   const frame = frames[cursor] ?? frames[0]
 
   const drawing = useRef(false)
@@ -54,8 +86,8 @@ function GridCanvas() {
   const visited = new Set(frame.visited)
   const frontier = new Set(frame.frontier)
   const path = new Set(frame.path)
-
   const cells = grid.rows * grid.cols
+
   const color = (i: number): string => {
     if (i === grid.start) return '#10b981' // emerald
     if (i === grid.end) return '#f43f5e' // rose
@@ -64,6 +96,7 @@ function GridCanvas() {
     if (visited.has(i)) return '#4f46e5' // indigo
     if (frontier.has(i)) return '#0ea5e9' // sky
     if (grid.walls.has(i)) return '#334155' // slate-700
+    if (grid.weights.has(i)) return '#7c2d12' // orange-900 terrain
     return '#0f172a' // slate-900
   }
 
@@ -73,21 +106,28 @@ function GridCanvas() {
       style={{ gridTemplateColumns: `repeat(${grid.cols}, minmax(0, 1fr))` }}
       onMouseLeave={() => (drawing.current = false)}
     >
-      {Array.from({ length: cells }, (_, i) => (
-        <div
-          key={i}
-          onMouseDown={() => {
-            drawing.current = true
-            paintOn.current = !grid.walls.has(i)
-            toggleWall(i, paintOn.current)
-          }}
-          onMouseEnter={() => {
-            if (drawing.current) toggleWall(i, paintOn.current)
-          }}
-          className="aspect-square transition-colors duration-150"
-          style={{ backgroundColor: color(i) }}
-        />
-      ))}
+      {Array.from({ length: cells }, (_, i) => {
+        const heavy = grid.weights.has(i)
+        const isOn = paintMode === 'wall' ? grid.walls.has(i) : grid.weights.has(i)
+        return (
+          <div
+            key={i}
+            onMouseDown={() => {
+              drawing.current = true
+              paintOn.current = !isOn
+              paintCell(i, paintOn.current)
+            }}
+            onMouseEnter={() => {
+              if (drawing.current) paintCell(i, paintOn.current)
+            }}
+            className="aspect-square transition-colors duration-150"
+            style={{
+              backgroundColor: color(i),
+              boxShadow: heavy ? 'inset 0 0 0 2px rgba(234,88,12,0.85)' : undefined,
+            }}
+          />
+        )
+      })}
     </div>
   )
 }
@@ -102,25 +142,15 @@ export function PathfindingApp() {
     <main className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex gap-1 rounded-lg border border-slate-800 bg-slate-900/60 p-1">
-            {ALGOS.map((a) => (
-              <button
-                key={a.id}
-                onClick={() => s.setAlgo(a.id)}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  s.algo === a.id ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                {a.label}
-              </button>
-            ))}
-          </div>
+          <Pills options={ALGOS} value={s.algo} onChange={s.setAlgo} />
           <Btn onClick={s.run} variant="primary">
             ▶ Run
           </Btn>
-          <div className="ml-auto flex gap-2">
+          <div className="ml-auto flex items-center gap-2">
+            <span className="text-xs text-slate-500">Paint</span>
+            <Pills options={PAINT} value={s.paintMode} onChange={s.setPaintMode} />
             <Btn onClick={s.randomMaze}>⟳ Maze</Btn>
-            <Btn onClick={s.clearWalls}>Clear</Btn>
+            <Btn onClick={s.clearGrid}>Clear</Btn>
           </div>
         </div>
 
@@ -138,7 +168,7 @@ export function PathfindingApp() {
           </Btn>
           <Btn onClick={s.stepForward}>▶</Btn>
           <div className="font-mono text-xs text-slate-400">
-            explored {frame.stats.visited} · path {frame.stats.pathLength}
+            explored {frame.stats.visited} · path {frame.stats.pathLength} · cost {frame.stats.pathCost}
           </div>
           <div className="ml-auto font-mono text-xs text-slate-400">
             step {s.cursor} / {last}
@@ -168,10 +198,18 @@ export function PathfindingApp() {
           <Legend color="#10b981" label="Start" />
           <Legend color="#f43f5e" label="Goal" />
           <Legend color="#334155" label="Wall" />
+          <Legend color="#7c2d12" label="Weight (cost 8)" />
           <Legend color="#0ea5e9" label="Frontier" />
           <Legend color="#4f46e5" label="Visited" />
           <Legend color="#fbbf24" label="Path" />
         </div>
+
+        <p className="text-xs leading-relaxed text-slate-500">
+          Paint a band of <span className="text-orange-400">weighted terrain</span> across the grid,
+          then run <span className="font-mono text-slate-300">BFS</span> and{' '}
+          <span className="font-mono text-slate-300">Dijkstra</span> in turn: BFS charges straight
+          through (fewest cells), while Dijkstra detours around it for a lower total cost.
+        </p>
       </section>
 
       <aside className="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
