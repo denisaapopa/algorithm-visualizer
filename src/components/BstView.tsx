@@ -51,15 +51,35 @@ export function BstView() {
             Insert
           </Btn>
           <Btn onClick={s.search}>Search</Btn>
+          <Btn onClick={s.remove}>Delete</Btn>
           <div className="ml-auto flex gap-2">
             <Btn onClick={s.randomize}>⟳ Random</Btn>
             <Btn onClick={s.reset}>Clear</Btn>
           </div>
         </div>
 
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-slate-500">Traverse</span>
+          <Btn onClick={() => s.traverse('in')}>In-order</Btn>
+          <Btn onClick={() => s.traverse('pre')}>Pre-order</Btn>
+          <Btn onClick={() => s.traverse('post')}>Post-order</Btn>
+          <Btn onClick={() => s.traverse('level')}>Level-order</Btn>
+        </div>
+
         <div className="h-[340px] rounded-xl border border-slate-800 bg-slate-900/40 p-3 sm:h-[440px]">
           <TreeView frame={frame} />
         </div>
+
+        {frame.sequence.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2">
+            <span className="mr-1 text-[11px] uppercase tracking-wide text-slate-500">Output</span>
+            {frame.sequence.map((v, i) => (
+              <span key={i} className="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-xs text-slate-200">
+                {v}
+              </span>
+            ))}
+          </div>
+        )}
 
         <div className="rounded-lg border border-indigo-900/60 bg-indigo-950/40 px-3 py-2 text-sm text-indigo-200">
           {frame.message}
@@ -108,14 +128,17 @@ export function BstView() {
         </div>
 
         <p className="text-xs leading-relaxed text-slate-500">
-          Try the worst case: insert <span className="font-mono text-slate-300">1, 2, 3, 4, 5</span> in
-          order and watch the tree degenerate into a linked list — every search becomes O(n).
+          Try it: run an <span className="text-slate-300">in-order</span> traversal — the output comes
+          out sorted. Or insert <span className="font-mono text-slate-300">1, 2, 3, 4, 5</span> in order
+          and watch the tree degenerate into a linked list, making every search O(n). Delete a node with
+          two children to see the in-order successor take its place.
         </p>
 
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
           <Legend color="#fbbf24" label="Comparing" />
-          <Legend color="#6366f1" label="Path" />
+          <Legend color="#6366f1" label="Path / visited" />
           <Legend color="#34d399" label="Found / inserted" />
+          <Legend color="#fb7185" label="Removing" />
         </div>
       </aside>
     </div>

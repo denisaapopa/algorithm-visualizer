@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { BST, type TreeFrame } from '../structures/bst'
+import { BST, type TraversalOrder, type TreeFrame } from '../structures/bst'
 
 // Single live tree, mutated by inserts. Rendering is driven purely by `frames`.
 let tree = new BST()
@@ -24,6 +24,8 @@ interface BstState {
   setInput: (v: string) => void
   insert: () => void
   search: () => void
+  remove: () => void
+  traverse: (order: TraversalOrder) => void
   randomize: () => void
   reset: () => void
   play: () => void
@@ -57,6 +59,14 @@ export const useBstStore = create<BstState>((set, get) => ({
     if (!get().input || Number.isNaN(value)) return
     set({ frames: tree.searchTrace(value), cursor: 0, playing: true, input: '' })
   },
+
+  remove: () => {
+    const value = Number(get().input)
+    if (!get().input || Number.isNaN(value)) return
+    set({ frames: tree.deleteTrace(value), cursor: 0, playing: true, input: '' })
+  },
+
+  traverse: (order) => set({ frames: tree.traverse(order), cursor: 0, playing: true }),
 
   randomize: () => set({ frames: [seed(7)], cursor: 0, playing: false, input: '' }),
 

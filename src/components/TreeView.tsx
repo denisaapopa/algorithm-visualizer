@@ -52,6 +52,10 @@ export function TreeView({ frame }: { frame: TreeFrame }) {
           fill = '#78350f'
           stroke = '#fbbf24'
         }
+        if (n.id === frame.removing) {
+          fill = '#4c0519'
+          stroke = '#fb7185'
+        }
         return (
           <g key={n.id}>
             <circle cx={p.cx} cy={p.cy} r={R} fill={fill} stroke={stroke} strokeWidth={2.5} />
