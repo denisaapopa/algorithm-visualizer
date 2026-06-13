@@ -1,6 +1,8 @@
 import { useHashStore } from '../store/hashStore'
 import { useTracePlayback } from '../hooks/useTracePlayback'
 import type { HashFrame } from '../structures/hashTable'
+import { Explainer } from './Explainer'
+import { EXPLANATIONS } from '../content/explanations'
 
 function Btn({
   onClick,
@@ -135,14 +137,7 @@ export function HashTableView() {
       </section>
 
       <aside className="flex flex-col gap-5 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-100">Hash Table</h2>
-          <p className="mt-1 text-sm leading-relaxed text-slate-400">
-            A hash function maps each value to a bucket: <span className="font-mono text-slate-300">value % {frame.capacity}</span>.
-            Look-ups jump straight to that bucket — O(1) — then walk a short chain. Collisions (two
-            values landing in the same bucket) are appended to the chain.
-          </p>
-        </div>
+        <Explainer data={EXPLANATIONS.hash} />
 
         <div className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-sm">
           <div className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">Complexity</div>
@@ -150,11 +145,6 @@ export function HashTableView() {
           <Row label="Search" value="O(1) avg · O(n) worst" />
           <Row label="Load factor" value={`${frame.size}/${frame.capacity} = ${frame.loadFactor.toFixed(2)}`} />
         </div>
-
-        <p className="text-xs leading-relaxed text-slate-500">
-          The worst case is everything colliding into one bucket — then search degrades to a linear
-          scan, O(n). Real hash tables keep the load factor low and resize to avoid long chains.
-        </p>
 
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
           <Legend color="#6366f1" label="Target bucket" />

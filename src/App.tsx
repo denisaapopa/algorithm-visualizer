@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { SortingApp } from './components/SortingApp'
 import { DataStructuresApp } from './components/DataStructuresApp'
+import { PathfindingApp } from './components/PathfindingApp'
 
-type Tab = 'sorting' | 'structures'
+type Tab = 'sorting' | 'structures' | 'pathfinding'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'sorting', label: 'Sorting' },
   { id: 'structures', label: 'Data Structures' },
+  { id: 'pathfinding', label: 'Pathfinding' },
 ]
 
 export default function App() {
@@ -33,7 +35,9 @@ export default function App() {
         </nav>
       </header>
 
-      {tab === 'sorting' ? <SortingApp /> : <DataStructuresApp />}
+      {tab === 'sorting' && <SortingApp />}
+      {tab === 'structures' && <DataStructuresApp />}
+      {tab === 'pathfinding' && <PathfindingApp />}
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import { useBstStore } from '../store/bstStore'
 import { useTracePlayback } from '../hooks/useTracePlayback'
 import { TreeView } from './TreeView'
+import { Explainer } from './Explainer'
+import { EXPLANATIONS } from '../content/explanations'
 
 function Btn({
   onClick,
@@ -94,14 +96,7 @@ export function BstView() {
       </section>
 
       <aside className="flex flex-col gap-5 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-100">Binary Search Tree</h2>
-          <p className="mt-1 text-sm leading-relaxed text-slate-400">
-            Every node's left subtree holds smaller values and its right subtree larger ones. That
-            invariant means each comparison discards half the remaining tree — so search and insert
-            follow a single root-to-leaf path.
-          </p>
-        </div>
+        <Explainer data={EXPLANATIONS.bst} />
 
         <div className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-sm">
           <div className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">Complexity</div>
@@ -111,9 +106,8 @@ export function BstView() {
         </div>
 
         <p className="text-xs leading-relaxed text-slate-500">
-          Watch the worst case: insert <span className="font-mono text-slate-300">1, 2, 3, 4, 5</span> in
-          order and the tree degenerates into a linked list — every search becomes O(n). That's why
-          self-balancing trees (AVL, red-black) exist.
+          Try the worst case: insert <span className="font-mono text-slate-300">1, 2, 3, 4, 5</span> in
+          order and watch the tree degenerate into a linked list — every search becomes O(n).
         </p>
 
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
