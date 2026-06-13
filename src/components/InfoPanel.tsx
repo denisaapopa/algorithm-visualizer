@@ -1,5 +1,7 @@
 import { usePlayerStore } from '../store/playerStore'
 import { getAlgorithm } from '../engine/algorithms'
+import { Explainer } from './Explainer'
+import { EXPLANATIONS } from '../content/explanations'
 
 function Stat({ label, value, color }: { label: string; value: string | number; color: string }) {
   return (
@@ -32,10 +34,7 @@ export function InfoPanel() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div>
-        <h2 className="text-lg font-semibold text-slate-100">{meta.name}</h2>
-        <p className="mt-1 text-sm leading-relaxed text-slate-400">{meta.blurb}</p>
-      </div>
+      <h2 className="text-lg font-semibold text-slate-100">{meta.name}</h2>
 
       {/* live narration */}
       <div className="rounded-lg border border-indigo-900/60 bg-indigo-950/40 px-3 py-2 text-sm text-indigo-200">
@@ -67,6 +66,13 @@ export function InfoPanel() {
         <Legend color="#a855f7" label="Pivot" />
         <Legend color="#34d399" label="Sorted" />
       </div>
+
+      {/* full explanation */}
+      {EXPLANATIONS[algorithmId] && (
+        <div className="border-t border-slate-800 pt-4">
+          <Explainer data={EXPLANATIONS[algorithmId]} />
+        </div>
+      )}
     </div>
   )
 }

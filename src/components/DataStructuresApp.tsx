@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { BstView } from './BstView'
 import { HashTableView } from './HashTableView'
+import { LinkedListView } from './LinkedListView'
 
-type Structure = 'bst' | 'hash'
+type Structure = 'bst' | 'hash' | 'list'
 
 const STRUCTURES: { id: Structure; label: string }[] = [
   { id: 'bst', label: 'Binary Search Tree' },
   { id: 'hash', label: 'Hash Table' },
+  { id: 'list', label: 'Linked List' },
 ]
 
 export function DataStructuresApp() {
@@ -28,7 +30,9 @@ export function DataStructuresApp() {
         ))}
       </div>
 
-      {structure === 'bst' ? <BstView /> : <HashTableView />}
+      {structure === 'bst' && <BstView />}
+      {structure === 'hash' && <HashTableView />}
+      {structure === 'list' && <LinkedListView />}
     </main>
   )
 }

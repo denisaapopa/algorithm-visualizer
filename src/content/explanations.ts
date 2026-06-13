@@ -198,4 +198,143 @@ export const EXPLANATIONS: Record<string, Explanation> = {
       'Route planning where straight-line distance estimates the remainder.',
     ],
   },
+
+  bubble: {
+    title: 'Bubble Sort',
+    summary:
+      'Repeatedly walks the list swapping adjacent out-of-order pairs, so the largest value "bubbles" to the end on each pass.',
+    how: [
+      'Compare each adjacent pair from left to right; swap them if they are out of order.',
+      'After one full pass the largest value has settled at the end.',
+      'Repeat over the shrinking unsorted region.',
+      'If a whole pass makes no swaps, the list is already sorted — stop early.',
+    ],
+    useWhen: [
+      'Teaching how sorting and swaps work.',
+      'Tiny inputs where simplicity beats speed.',
+      'Detecting an already-sorted list cheaply (early exit).',
+    ],
+    strengths: ['Dead simple to write.', 'Stable and in-place.', 'O(n) on already-sorted input with early exit.'],
+    weaknesses: ['O(n²) average and worst case.', 'Far more swaps than selection sort.', 'Impractical beyond small n.'],
+    realWorld: ['Almost never used in practice.', 'A teaching staple.', 'Occasionally as a tiny "is this sorted?" check.'],
+  },
+
+  insertion: {
+    title: 'Insertion Sort',
+    summary:
+      'Builds a sorted prefix one element at a time, sliding each new value left until it sits in the right place.',
+    how: [
+      'Take the next element from the unsorted part.',
+      'Compare it leftward, shifting larger elements one slot right.',
+      'Drop it into the gap that opens up.',
+      'Repeat until every element has been inserted.',
+    ],
+    useWhen: [
+      'Small arrays.',
+      'Nearly-sorted data — it runs in close to O(n).',
+      'Online sorting, where elements arrive one at a time.',
+    ],
+    strengths: ['O(n) best case on nearly-sorted data.', 'Stable, in-place, very low overhead.', 'Excellent for small n.'],
+    weaknesses: ['O(n²) on random/reverse data.', 'Lots of element shifting.'],
+    realWorld: [
+      'The base case inside hybrid sorts (Timsort, introsort) for small subarrays.',
+      'Keeping a nearly-sorted stream ordered.',
+    ],
+  },
+
+  selection: {
+    title: 'Selection Sort',
+    summary:
+      'Repeatedly finds the smallest remaining value and swaps it into the next position — fewest swaps of any of these.',
+    how: [
+      'Scan the unsorted region to find its minimum.',
+      'Swap that minimum into the front of the unsorted region.',
+      'Shrink the unsorted region by one.',
+      'Repeat until nothing is left unsorted.',
+    ],
+    useWhen: [
+      'When writing/swapping is far more expensive than comparing.',
+      'Tiny inputs where its simplicity is fine.',
+    ],
+    strengths: ['At most n−1 swaps — the fewest here.', 'In-place and simple.'],
+    weaknesses: ['Always O(n²) comparisons, even on sorted input.', 'Not stable.'],
+    realWorld: ['Niche: when write cost dominates (e.g. minimising flash-memory wear).', 'Teaching.'],
+  },
+
+  merge: {
+    title: 'Merge Sort',
+    summary:
+      'Divide and conquer: split the list in half, sort each half, then merge the two sorted halves back together.',
+    how: [
+      'Recursively split the list until each piece is a single element (already sorted).',
+      'Merge pairs of pieces by repeatedly taking the smaller front element.',
+      'Combine merged pieces up the tree until the whole list is one sorted run.',
+    ],
+    useWhen: [
+      'You need guaranteed O(n log n) every time.',
+      'Stability matters.',
+      'Sorting linked lists, or external sorting of data too big for memory.',
+    ],
+    strengths: ['Guaranteed O(n log n) always.', 'Stable and predictable.', 'Parallelises and works well on linked lists / external data.'],
+    weaknesses: ['Needs O(n) extra memory.', 'Larger constants than quicksort in memory.', 'Not in-place for arrays.'],
+    realWorld: ['External sorting of huge files.', 'Library stable sorts (Timsort is merge-based).', 'Sorting linked lists.'],
+  },
+
+  quick: {
+    title: 'Quick Sort',
+    summary:
+      'Pick a pivot, partition values into smaller-than and larger-than groups around it, then recurse on each group.',
+    how: [
+      'Choose a pivot element.',
+      'Partition: move smaller values to its left, larger to its right.',
+      'The pivot is now in its final sorted position.',
+      'Recurse on the left and right partitions.',
+    ],
+    useWhen: [
+      'General-purpose in-memory sorting.',
+      'Average speed matters and stability does not.',
+    ],
+    strengths: ['Usually the fastest in practice.', 'In-place and cache-friendly.', 'O(n log n) average.'],
+    weaknesses: ['O(n²) worst case with bad pivots (e.g. sorted input).', 'Not stable.', 'Recursion depth on degenerate splits.'],
+    realWorld: ['The default sort in many standard libraries — often as introsort (quicksort + heapsort fallback).'],
+  },
+
+  heap: {
+    title: 'Heap Sort',
+    summary:
+      'Turn the array into a max-heap, then repeatedly move the largest element to the end and re-heapify.',
+    how: [
+      'Build a max-heap from the array in place.',
+      'Swap the root (the maximum) with the last element.',
+      'Shrink the heap by one and sift the new root down to restore the heap.',
+      'Repeat until the heap is empty — the array is now sorted.',
+    ],
+    useWhen: [
+      'You need guaranteed O(n log n) with O(1) extra memory.',
+      'Worst-case guarantees matter (real-time systems).',
+    ],
+    strengths: ['Guaranteed O(n log n).', 'In-place, O(1) extra space.', 'No catastrophic worst case.'],
+    weaknesses: ['Not stable.', 'Poor cache locality from heap index jumps.', 'Slower in practice than quicksort.'],
+    realWorld: ['Introsort’s fallback to guarantee worst case.', 'Priority-queue-driven scheduling.', 'Real-time / embedded systems.'],
+  },
+
+  linkedlist: {
+    title: 'Linked List (singly)',
+    summary:
+      'A chain of nodes where each node holds a value and a pointer to the next; the list is reachable only through the head.',
+    how: [
+      'Each node stores its value and a reference (“next”) to the following node.',
+      'The head pointer marks the first node; the last node points to nothing.',
+      'To reach the k-th node you must follow next k times — there is no random jump.',
+      'Insert and delete just rewire a couple of next pointers — no shifting.',
+    ],
+    useWhen: [
+      'Frequent insertion/deletion at the front or at a known node.',
+      'The size changes a lot and you never need indexed access.',
+      'Building other structures (stacks, queues, adjacency lists).',
+    ],
+    strengths: ['O(1) insert/delete at the head.', 'Grows without resizing or copying.', 'No need for one contiguous block of memory.'],
+    weaknesses: ['O(n) to reach an index or search — you must walk the chain.', 'Extra memory per node for the pointer.', 'Poor cache locality versus an array.'],
+    realWorld: ['Implementations of stacks and queues.', 'Adjacency lists in graphs.', 'LRU caches (doubly linked) and allocator free lists.'],
+  },
 }
