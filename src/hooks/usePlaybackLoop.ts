@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { usePlayerStore } from '../store/playerStore'
+import { lastFrame, usePlayerStore } from '../store/playerStore'
 
 // Advances the cursor while playing. Lives outside the store so the timer is
 // tied to component lifecycle and cleaned up properly (incl. React StrictMode).
@@ -11,7 +11,7 @@ export function usePlaybackLoop() {
     if (!playing) return
     const id = setInterval(() => {
       const s = usePlayerStore.getState()
-      if (s.cursor >= s.frames.length - 1) {
+      if (s.cursor >= lastFrame(s)) {
         usePlayerStore.setState({ playing: false })
         return
       }
